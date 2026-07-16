@@ -12,9 +12,7 @@ The persistence layer creates the workflow row on `GraphRunStartedEvent`, then u
 
 ## Pause
 
-The `human_input` path pauses the graph at the engine level. When `GraphRunPausedEvent` arrives, `PauseStatePersistenceLayer` stores a `WorkflowResumptionContext` with the graph runtime snapshot, the generate entity, and the response stream filter state, then writes the workflow pause record with the mapped pause reasons. Dify stores that snapshot in its workflow pause row, and human-input form records keep the token and run binding that let the pause survive across requests.
-
-The snapshot matters because it records the exact execution position. It also preserves the filter state that the live response stream uses, so a later consumer can continue from the same stream shape instead of starting over.
+The `human_input` path pauses the graph at the engine level. When `GraphRunPausedEvent` arrives, `PauseStatePersistenceLayer` stores a `WorkflowResumptionContext` with the graph runtime snapshot, including the variable pool, the generate entity, and the response stream filter state, then writes the workflow pause record with the mapped pause reasons. Dify stores that snapshot in its workflow pause row, and human-input form records keep the token and run binding that let the pause survive across requests and later resume from the same execution state.
 
 ## Resume
 
