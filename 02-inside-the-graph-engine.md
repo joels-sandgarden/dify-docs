@@ -50,3 +50,23 @@ Dify wraps a `RedisChannel` and a `CelerySignalCommandChannel` in `CombinedComma
 ## Events out
 
 `GraphEngine.run()` yields graph and node events as a stream. `WorkflowEntry.run()` filters that stream with `iter_dify_graph_engine_events()`, and `WorkflowAppRunner` turns each engine event into the app queue event that Dify consumers read. The downstream queue path continues in [Anatomy of a workflow run](/01-anatomy-of-a-workflow-run.md).
+
+## Layers
+
+`GraphEngineLayer` exposes `on_graph_start`, `on_event`, `on_graph_end`, `on_node_run_start`, and `on_node_run_end`. Dify attaches `WorkflowPersistenceLayer`, `ObservabilityLayer`, and `LLMQuotaLayer` in `api/core/workflow/workflow_entry.py`, then adds `SuspendLayer`, `ConversationVariablePersistenceLayer`, `PauseStatePersistenceLayer`, `TimeSliceLayer`, and `TriggerPostLayer` around the engine where pause, conversation, time slice, and trigger concerns live.
+
+`WorkflowPersistenceLayer` saves workflow and node execution state, `ObservabilityLayer` opens spans, and `LLMQuotaLayer` checks and deducts tenant quota. `SuspendLayer` tracks paused state, `ConversationVariablePersistenceLayer` persists `conversation.*` updates, `PauseStatePersistenceLayer` saves the resume snapshot, `TimeSliceLayer` sends pause commands when the scheduler hits its limit, and `TriggerPostLayer` updates trigger logs when a run ends.
+
+## Failure
+
+`ErrorHandler.handle_node_failure()` checks node retry settings first, then applies the node error strategy. Retry produces `NodeRunRetryEvent`, fail branch converts the failure into `NodeRunExceptionEvent` routed through `fail-branch`, default value continues with the node's default outputs, and the absence of a strategy aborts the run.
+
+`EventHandler` then re-dispatches retry and exception outcomes or ends the workflow on abort. The same outcomes feed the loop and pause paths, so [Parallel iteration and loops](/04-parallel-iteration-and-loops.md) and [Pause, resume, and run state](/05-pause-resume-and-run-state.md) capture the related consequences.
+
+## Where to look in the code
+
+- `graphon`: `src/graphon/graph_engine/graph_engine.py`, `worker.py`, `worker_management/worker_pool.py`
+- `graphon`: `src/graphon/graph_engine/graph_traversal/edge_processor.py`, `skip_propagator.py`, `error_handler.py`
+- `graphon`: `src/graphon/runtime/graph_runtime_state.py`, `variable_pool.py`, `graph_engine/domain/graph_execution.py`, `node_execution.py`
+- `dify`: `api/core/workflow/workflow_entry.py`, `api/core/app/apps/workflow_app_runner.py`, `api/core/app/apps/workflow/app_runner.py`
+- `dify`: `api/core/app/apps/workflow/command_channels.py`, `api/configs/feature/__init__.py`, `api/core/app/layers/*.py`, `api/core/app/workflow/layers/*.py`
