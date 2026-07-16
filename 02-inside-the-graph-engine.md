@@ -55,7 +55,7 @@ Dify wraps a `RedisChannel` and a `CelerySignalCommandChannel` in `CombinedComma
 
 `GraphEngineLayer.initialize(read_only_runtime_state, command_channel)` names the binding point for each layer. `GraphEngine.layer()` applies that binding before execution begins, giving each layer a read-only runtime snapshot and the command channel without exposing mutable engine internals.
 
-Dify uses that boundary in a few specific places. `WorkflowEntry` attaches `LLMQuotaLayer` and `ObservabilityLayer`; `WorkflowAppRunner` attaches `WorkflowPersistenceLayer`; and `WorkflowAppGenerator` attaches `PauseStatePersistenceLayer` when pause state configuration is present. The surrounding runner stack still adds session cleanup, suspension, conversation variable persistence, time slicing, and trigger bookkeeping where those concerns belong.
+Dify uses that boundary in a few specific places. `WorkflowEntry` attaches `LLMQuotaLayer` and `ObservabilityLayer`; `WorkflowAppRunner` attaches `WorkflowPersistenceLayer`; and `WorkflowAppGenerator` attaches `PauseStatePersistenceLayer` when pause state configuration exists. The surrounding runner stack keeps the remaining concerns in adjacent layers where they belong.
 
 `WorkflowPersistenceLayer` saves workflow and node execution state, `ObservabilityLayer` opens spans, and `LLMQuotaLayer` checks and deducts tenant quota. `SuspendLayer` tracks paused state, `ConversationVariablePersistenceLayer` persists `conversation.*` updates, `PauseStatePersistenceLayer` saves the resume snapshot, `TimeSliceLayer` sends pause commands when the scheduler hits its limit, and `TriggerPostLayer` updates trigger logs when a run ends.
 
