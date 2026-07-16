@@ -1,20 +1,20 @@
 # About this site
 
-This field guide explains how the Dify codebase fits together. It exists to give engineers a working mental model of the product surface, especially the parts that are easier to understand from source than from user facing documentation.
+This field guide explains how the Dify codebase fits together. It exists to give engineers a working mental model of the product surface, especially the parts that are easier to understand from source than from user facing documentation. The site does not teach usage. It maps the internal structure behind the product surface so a reader can follow request flow, execution flow, and ownership boundaries.
 
-The guide does not replace the official documentation. It complements [docs.dify.ai](https://docs.dify.ai) by focusing on platform internals, execution paths, and the relationships between the main code areas.
+The guide does not replace the official documentation. It complements [docs.dify.ai](https://docs.dify.ai) by focusing on platform internals, execution paths, and the relationships between the main code areas. The official docs remain the first stop for quickstarts, usage guides, plugin development, API reference, and self hosting operations.
 
 ## Who this is for
 
-This guide is for engineers who adopt, operate, extend, or contribute to Dify and need to understand how requests move through the platform, how workflow execution reaches the graph runtime, and where the moving pieces live. It assumes the reader can read code but wants the map before tracing symbols and call paths.
+This guide is for engineers who adopt, operate, extend, or contribute to Dify and need to understand how requests move through the platform, how workflow execution reaches the graph runtime, and where runtime state lives. It is aimed at readers who can read code but want the map before tracing symbols and call paths. That includes platform engineers, integrators, and contributors who need a shared picture before diving into the source.
 
 ## How this site was made
 
-Doc Holiday wrote this site by exploring `langgenius/dify` and `langgenius/graphon` directly. The pages come from real paths and symbol names in `api/` and `src/graphon/`, not from product copy. The result reflects how the code actually fits together: Dify’s integration layer in `api/` and Graphon’s workflow engine and runtime internals in `src/graphon/`.
+Doc Holiday wrote this site by exploring `langgenius/dify` and `langgenius/graphon` directly. The pages use real paths and symbol names in `api/` and `src/graphon/`, so the reader can move from prose back into code without translation. The guide centers on Dify’s integration layer in `api/` and Graphon’s workflow engine and runtime internals in `src/graphon/`.
 
 ## Scope and current state
 
-This guide reflects a snapshot of a very active codebase. As of July 2026, the agent stack and CLI change faster than the main `api/` plus `src/graphon/` path, so the guide treats those areas as brief observations rather than fixed reference material. The official documentation at [docs.dify.ai](https://docs.dify.ai) remains the authoritative source for product behavior, setup, and operations, while this site focuses on the internals those docs do not explain.
+This guide reflects a snapshot of a very active codebase. It does not try to freeze the moving parts into a permanent map. As of July 2026, the agent stack and CLI still change quickly, so the guide treats them as brief observations when they appear, not as stable reference material. The main path runs through Dify’s `api/` layer and Graphon’s `src/graphon/` runtime, and the pages stay at that system level rather than drilling into every function.
 
 ## Table of contents
 
