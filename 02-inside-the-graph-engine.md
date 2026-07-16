@@ -49,7 +49,7 @@ Dify wraps a `RedisChannel` and a `CelerySignalCommandChannel` in `CombinedComma
 
 ## Events out
 
-`GraphEngine.run()` yields a stream of `GraphEngineEvent` objects. `EventManager.emit_events()` drains the buffered event queue and streams those values out, while `EventHandler.dispatch()` turns node events into state transitions, traversal work, retries, and completion. In Dify, `WorkflowAppRunner._handle_event()` turns each engine event into an app queue update after the stream reaches the runner boundary. The downstream queue path continues in [Anatomy of a workflow run](/01-anatomy-of-a-workflow-run.md).
+`GraphEngine.run()` yields a stream of `GraphEngineEvent` objects. `EventManager.emit_events()` drains the buffered event queue and streams those values out, while `EventHandler.dispatch()` turns node events into state transitions, traversal work, retries, and completion. The stream shape lets Dify surface node-by-node progress as it happens, so `WorkflowAppRunner._handle_event()` can hand off each update to the app runner immediately instead of waiting for a single terminal return value. The downstream queue path continues in [Anatomy of a workflow run](/01-anatomy-of-a-workflow-run.md).
 
 ## Layers
 
@@ -57,7 +57,7 @@ Dify wraps a `RedisChannel` and a `CelerySignalCommandChannel` in `CombinedComma
 
 Dify uses that boundary in a few specific places. `WorkflowEntry` attaches `LLMQuotaLayer` and `ObservabilityLayer`; `WorkflowAppRunner` attaches `WorkflowPersistenceLayer`; and `WorkflowAppGenerator` attaches `PauseStatePersistenceLayer` when pause state configuration exists. The surrounding runner stack keeps the remaining concerns in adjacent layers where they belong.
 
-`WorkflowPersistenceLayer` saves workflow and node execution state, `ObservabilityLayer` opens spans, and `LLMQuotaLayer` checks and deducts tenant quota. `SuspendLayer` tracks paused state, `ConversationVariablePersistenceLayer` persists `conversation.*` updates, `PauseStatePersistenceLayer` saves the resume snapshot, `TimeSliceLayer` sends pause commands when the scheduler hits its limit, and `TriggerPostLayer` updates trigger logs when a run ends.
+`WorkflowPersistenceLayer` saves workflow and node execution state, `ObservabilityLayer` opens spans, and `LLMQuotaLayer` checks and deducts tenant quota. `SuspendLayer` tracks paused state, `ConversationVariablePersistenceLayer` persists `conversation.*` updates, `PauseStatePersistenceLayer` saves the resume snapshot, `TimeSliceLayer` sends pause commands when the scheduler hits its limit, and `TriggerPostLayer` updates trigger logs when a run ends. These concerns all need node-level visibility, but the engine boundary keeps them out of individual node implementations so each node stays focused on its own work.
 
 ## Failure
 
