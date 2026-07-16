@@ -4,7 +4,7 @@
 
 For product level setup and error handling context, see [Key concepts](https://docs.dify.ai/en/learn/key-concepts), [Workflow and chatflow](https://docs.dify.ai/en/cloud/use-dify/build/workflow-chatflow), and [Predefined error handling](https://docs.dify.ai/en/cloud/use-dify/build/predefined-error-handling-logic).
 
-A workflow run begins as an HTTP request, but the request handler only validates the payload and creates the run description. The execution path then crosses a background boundary, enters graphon through `WorkflowEntry`, and returns state through a queue backed stream. The Dify repo owns the request, generator, queue, and persistence code under `api/`; the graphon repo owns the executable graph and engine under `src/graphon/`.
+A workflow run begins as an HTTP request, but the request handler only validates the payload and creates the run description. The execution path then crosses a background boundary, enters graphon through `WorkflowEntry`, and returns state through the queue stream. The Dify repo owns the request, generator, queue, and persistence code under `api/`; the graphon repo owns the executable graph and engine under `src/graphon/`.
 
 ```mermaid
 sequenceDiagram
@@ -34,7 +34,7 @@ sequenceDiagram
     QM-->>SSE: stream browser visible results
 ```
 
-The controllers in `api/controllers/console/app/workflow.py`, `api/controllers/service_api/app/workflow.py`, and `api/controllers/web/workflow.py` all hand the request into `AppGenerateService.generate()`. `BaseAppGenerator._prepare_user_inputs()` in `api/core/app/apps/base_app_generator.py` normalizes the incoming values, converts files, and enforces the input shape before `WorkflowAppGenerator.generate()` or `AdvancedChatAppGenerator.generate()` packages the data into a generate entity. The handler stops there because it still needs a task id, queue ownership, and resume state before any worker can touch the run.
+The controllers in `api/controllers/console/app/workflow.py`, `api/controllers/service_api/app/workflow.py`, and `api/controllers/web/workflow.py` all hand the request to `AppGenerateService.generate()`. `BaseAppGenerator._prepare_user_inputs()` in `api/core/app/apps/base_app_generator.py` normalizes the incoming values, converts files, and enforces the input shape before `WorkflowAppGenerator.generate()` or `AdvancedChatAppGenerator.generate()` packages the data into a generate entity. The handler stops there because it still needs a task id, queue ownership, and resume state before any worker can touch the run.
 
 ## Dispatch to background execution
 
@@ -52,11 +52,11 @@ For the variable details behind that handoff, see [the variable system](./03-the
 
 ## Cross cutting behavior via layers
 
-The layer model keeps policy out of the engine core. `WorkflowEntry` attaches `WorkflowPersistenceLayer` from `api/core/app/workflow/layers/persistence.py`, `LLMQuotaLayer`, `ObservabilityLayer`, `build_workflow_agent_session_cleanup_layer()`, and any extra `GraphEngineLayer` instances that the caller passes in. Other Dify layers, such as `PauseStatePersistenceLayer`, `PauseStateLayer`, `SuspendLayer`, `TimesliceLayer`, `ConversationVariablePersistLayer`, and `TriggerPostLayer`, extend the same lifecycle without changing graphon itself. These layers handle persistence, pause state, quota control, observability, and trigger cleanup, so they act as extension points rather than core engine logic. The persistence and pause story continues in [pause, resume, and run state](./05-pause-resume-and-run-state.md).
+The layer model keeps policy outside the engine core. `WorkflowEntry` attaches `WorkflowPersistenceLayer` from `api/core/app/workflow/layers/persistence.py`, `LLMQuotaLayer`, `ObservabilityLayer`, `build_workflow_agent_session_cleanup_layer()`, and any extra `GraphEngineLayer` instances that the caller passes in. Other Dify layers, such as `PauseStatePersistenceLayer`, `PauseStateLayer`, `SuspendLayer`, `TimesliceLayer`, `ConversationVariablePersistLayer`, and `TriggerPostLayer`, extend the same lifecycle without changing graphon itself. These layers handle persistence, pause state, quota control, observability, and trigger cleanup, so they act as extension points rather than core engine logic. The persistence and pause story continues in [pause, resume, and run state](./05-pause-resume-and-run-state.md).
 
 ## Events out to SSE
 
-`iter_dify_graph_engine_events()` in `api/core/workflow/workflow_entry.py` filters graphon events into the response order that Dify promises. `WorkflowAppRunner._handle_event()` maps those events into Dify queue entities in `api/core/app/entities/queue_entities.py`, and `WorkflowAppQueueManager` keeps the queue open until a terminal workflow event arrives. `WorkflowAppGenerateResponseConverter` in `api/core/app/apps/workflow/generate_response_converter.py` then converts the queue output into blocking or streaming payloads, and `BaseAppGenerator.convert_to_event_stream()` turns those payloads into Server Sent Events for the browser. The client sees workflow lifecycle events, node lifecycle events, pause and retry events, chunk events, and human input events through that path, with the high level shapes defined in `api/core/app/entities/task_entities.py`.
+`iter_dify_graph_engine_events()` in `api/core/workflow/workflow_entry.py` filters graphon events into the response order that Dify promises. `WorkflowAppRunner._handle_event()` maps those events into Dify queue entities in `api/core/app/entities/queue_entities.py`, and `WorkflowAppQueueManager` keeps the queue open until a terminal workflow event arrives. `WorkflowAppGenerateResponseConverter` in `api/core/app/apps/workflow/generate_response_converter.py` then converts the queue output into blocking or streaming payloads, and `BaseAppGenerator.convert_to_event_stream()` turns those payloads into Server Sent Events for the browser. The browser sees workflow lifecycle events, node lifecycle events, pause and retry events, chunk events, and human input events through that path, with the high level shapes defined in `api/core/app/entities/task_entities.py`.
 
 ## What is left behind
 
