@@ -25,3 +25,26 @@ That path continues from the stored engine state rather than replaying the whole
 ## Timeslicing
 
 `TimeSliceLayer` adds a scheduler check around workflow execution. When the plan uses `WorkflowScheduleCFSPlanEntity.Strategy.TimeSlice`, the layer polls the scheduler, and `RESOURCE_LIMIT_REACHED` turns into a `PAUSE` command. The workflow pauses for capacity reasons instead of failing.
+
+## Failure semantics
+
+The node error-handle strategies visible in the code are `none`, `fail-branch`, and `default-value`. They describe how a node reacts to its own error, while retry handling stays separate from the workflow’s final status. `retry_history.py` records each retry attempt in `__dify_retry_history`, so the run keeps attempt history without turning every retry into a terminal failure.
+
+At workflow level, `WorkflowPersistenceLayer` writes `succeeded` when the graph finishes normally, `paused` when the graph pauses, `failed` when the graph fails, and `stopped` when the graph aborts. A node can retry or fail locally without ending the workflow, but a graph-level terminal event always updates the run row.
+
+## Operational limits
+
+The code does not promise automatic recovery from worker crashes, deploys, or other process loss. It resumes only after Dify has already saved the pause record, the resumption context, and the form state that identifies the run. If a process dies before those pieces reach storage, the code does not invent a replacement state.
+
+## SSE stream
+
+The SSE stream can outlive a single request, so reconnects matter. The workflow events endpoint in `api/controllers/service_api/app/workflow_events.py` resumes a stream after a pause or a dropped connection, and it can replay the persisted state snapshot so the consumer sees already executed nodes before new events arrive. That behavior depends on the persisted response stream filter described in [01 Anatomy of a Workflow Run](/01-anatomy-of-a-workflow-run.md): without the saved filter state, the resumed stream would lose the exact event shape that the first connection had already observed.
+
+## Where to look in the code
+
+- `api/models/workflow.py` — `WorkflowRun`, `WorkflowNodeExecutionModel`, and the workflow status fields.
+- `api/core/app/workflow/layers/persistence.py` — event-driven persistence from `GraphEngine`.
+- `api/core/app/layers/pause_state_persist_layer.py` — pause snapshots and `WorkflowResumptionContext`.
+- `api/core/app/layers/timeslice_layer.py` — `RESOURCE_LIMIT_REACHED` pause behavior.
+- `api/services/human_input_service.py` and `api/tasks/app_generate/workflow_execute_task.py` — human-input submission and `resume_app_execution`.
+- `api/controllers/service_api/app/workflow_events.py` — SSE reconnect and snapshot replay.
