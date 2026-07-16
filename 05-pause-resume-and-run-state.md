@@ -26,7 +26,7 @@ That path continues from the stored engine state rather than replaying the whole
 
 ## Failure semantics
 
-The node error-handle strategies visible in the code are `none`, `fail-branch`, and `default-value`. They describe how a node reacts to its own error, while retry handling stays separate from the workflow’s final status. `retry_history.py` records each retry attempt in `__dify_retry_history`, so the run keeps attempt history without turning every retry into a terminal failure.
+The node error-handle strategies visible in the code are `none`, `fail-branch`, and `default-value`. They describe how a node reacts to its own error, while retry handling stays separate from the workflow’s final status. For the configuration side of those strategies, see Dify’s official docs on [predefined error handling logic](https://docs.dify.ai/en/cloud/use-dify/build/predefined-error-handling-logic). `retry_history.py` records each retry attempt in `__dify_retry_history`, so the run keeps attempt history without turning every retry into a terminal failure.
 
 At workflow level, `WorkflowPersistenceLayer` writes `succeeded` when the graph finishes normally, `paused` when the graph pauses, `failed` when the graph fails, and `stopped` when the graph aborts. A node can retry or fail locally without ending the workflow, but a graph-level terminal event always updates the run row.
 
