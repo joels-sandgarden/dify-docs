@@ -20,15 +20,15 @@ This guide reflects a snapshot of a very active codebase. It does not try to fre
 
 | Page | Topic |
 | --- | --- |
-| [00-the-big-picture.md](00-the-big-picture.md) | The map of the whole platform. |
-| [01-anatomy-of-a-workflow-run.md](01-anatomy-of-a-workflow-run.md) | End-to-end trace of one run: HTTP → Celery → graph engine → SSE stream. |
-| [02-inside-the-graph-engine.md](02-inside-the-graph-engine.md) | Graphon's queue-and-worker execution model: ready queue, worker pool, edge processing, layers. |
-| [03-the-variable-system.md](03-the-variable-system.md) | The VariablePool: typed segments, selectors, and how data moves between nodes. |
-| [04-parallel-iteration-and-loops.md](04-parallel-iteration-and-loops.md) | Iteration and loop nodes as child engines: concurrency, ordering, error modes. |
-| [05-pause-resume-and-run-state.md](05-pause-resume-and-run-state.md) | What a run persists: run records, human-input pause/resume, error semantics. |
-| [06-the-model-runtime.md](06-the-model-runtime.md) | One facade over every model provider: ModelInstance, credentials, quotas. |
-| [07-the-rag-pipeline.md](07-the-rag-pipeline.md) | From uploaded document to retrieved context: indexing, vector backends, retrieval. |
-| [08-the-plugin-system.md](08-the-plugin-system.md) | The plugin daemon and its runtimes — the architecture Dify's blog calls "Beehive". |
+| [00-the-big-picture.md](00-the-big-picture.md) | the map of the whole platform |
+| [01-anatomy-of-a-workflow-run.md](01-anatomy-of-a-workflow-run.md) | end-to-end trace of one run: HTTP → Celery → graph engine → SSE stream |
+| [02-inside-the-graph-engine.md](02-inside-the-graph-engine.md) | graphon's queue-and-worker execution model: ready queue, worker pool, edge processing, layers |
+| [03-the-variable-system.md](03-the-variable-system.md) | the VariablePool: typed segments, selectors, and how data moves between nodes |
+| [04-parallel-iteration-and-loops.md](04-parallel-iteration-and-loops.md) | iteration and loop nodes as child engines: concurrency, ordering, error modes |
+| [05-pause-resume-and-run-state.md](05-pause-resume-and-run-state.md) | what a run persists: run records, human-input pause/resume, error semantics |
+| [06-the-model-runtime.md](06-the-model-runtime.md) | one facade over every model provider: ModelInstance, credentials, quotas |
+| [07-the-rag-pipeline.md](07-the-rag-pipeline.md) | from uploaded document to retrieved context: indexing, vector backends, retrieval |
+| [08-the-plugin-system.md](08-the-plugin-system.md) | the plugin daemon and its runtimes — the architecture Dify's blog calls "Beehive" |
 
 ## Where to look in the code
 
