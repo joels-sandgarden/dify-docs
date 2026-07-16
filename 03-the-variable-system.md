@@ -49,9 +49,8 @@ Files are first-class values in the same pool. `graphon/file/models.py` defines 
 ## Where to look in the code
 
 - **graphon/src/graphon/runtime/variable_pool.py** — selector-keyed storage, nested lookup, flattening, and bootstrap ingestion.
-- **graphon/src/graphon/variables/types.py** and **graphon/src/graphon/variables/segments.py** — the `SegmentType` taxonomy and the concrete segment classes.
+- **graphon/src/graphon/variables/types.py** and **graphon/src/graphon/variables/segments.py** — the `SegmentType` taxonomy, typed values, and segment rendering behavior.
 - **graphon/src/graphon/variables/factory.py** and **graphon/src/graphon/variables/template_resolution.py** — conversion between Python values, typed segments, and resolved template content.
 - **graphon/src/graphon/runtime/graph_runtime_state.py** — the runtime wrapper that carries the pool, execution context, and snapshot state.
 - **dify/api/core/workflow/system_variables.py** and **dify/api/core/workflow/variable_pool_initializer.py** — Dify's startup namespaces and pool seeding path.
-- **dify/api/core/app/layers/conversation_variable_persist_layer.py** — the conversation-variable write-back boundary.
-- **graphon/src/graphon/file/models.py** — file metadata as a renderable runtime value.
+- **dify/api/core/app/layers/conversation_variable_persist_layer.py** and **graphon/src/graphon/file/models.py** — the conversation-variable write-back boundary and file metadata as a renderable runtime value.
