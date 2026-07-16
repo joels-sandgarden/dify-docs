@@ -20,14 +20,15 @@ This guide reflects a snapshot of a very active codebase. It does not try to fre
 
 | Page | Topic |
 | --- | --- |
-| [01-anatomy-of-a-workflow-run.md](01-anatomy-of-a-workflow-run.md) | How a workflow run moves from request to result. |
-| [02-workflow-entry-and-app-runner.md](02-workflow-entry-and-app-runner.md) | How Dify starts graph execution and routes engine events. |
-| [03-dify-to-graphon-adapters.md](03-dify-to-graphon-adapters.md) | How Dify wraps graphon tools, nodes, and runtime helpers. |
-| [04-graph-runtime-state.md](04-graph-runtime-state.md) | How graphon tracks execution, suspension, and serialization. |
-| [05-iteration-nodes.md](05-iteration-nodes.md) | How child graphs run over ordered items and combine results. |
-| [06-human-input-and-file-references.md](06-human-input-and-file-references.md) | How runs pause for people and file backed context. |
-| [07-agent-stack.md](07-agent-stack.md) | The fast moving agent surface and its place in the system. |
-| [08-cli-and-operational-surface.md](08-cli-and-operational-surface.md) | The command line and support tooling around the platform. |
+| [00-the-big-picture.md](00-the-big-picture.md) | The map of the whole platform. |
+| [01-anatomy-of-a-workflow-run.md](01-anatomy-of-a-workflow-run.md) | End-to-end trace of one run: HTTP → Celery → graph engine → SSE stream. |
+| [02-inside-the-graph-engine.md](02-inside-the-graph-engine.md) | Graphon's queue-and-worker execution model: ready queue, worker pool, edge processing, layers. |
+| [03-the-variable-system.md](03-the-variable-system.md) | The VariablePool: typed segments, selectors, and how data moves between nodes. |
+| [04-parallel-iteration-and-loops.md](04-parallel-iteration-and-loops.md) | Iteration and loop nodes as child engines: concurrency, ordering, error modes. |
+| [05-pause-resume-and-run-state.md](05-pause-resume-and-run-state.md) | What a run persists: run records, human-input pause/resume, error semantics. |
+| [06-the-model-runtime.md](06-the-model-runtime.md) | One facade over every model provider: ModelInstance, credentials, quotas. |
+| [07-the-rag-pipeline.md](07-the-rag-pipeline.md) | From uploaded document to retrieved context: indexing, vector backends, retrieval. |
+| [08-the-plugin-system.md](08-the-plugin-system.md) | The plugin daemon and its runtimes — the architecture Dify's blog calls "Beehive". |
 
 ## Where to look in the code
 
