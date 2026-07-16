@@ -40,7 +40,7 @@ One facade serves the main model-facing surfaces across the product. Workflow no
 
 `api/core/plugin/impl/model_runtime.py` and `api/core/plugin/impl/model_runtime_factory.py` bridge plugin discovery to the runtime interface. `PluginModelRuntime` binds tenant and user scope to `PluginService` and `PluginModelClient`, then fetches provider schemas, validates credentials, resolves model schemas, and forwards LLM, embedding, rerank, speech to text, moderation, and text to speech calls into the plugin client. `PluginModelAssembly` composes that runtime with `ModelProviderFactory`, `ProviderManager`, and `ModelManager` so a single request-scoped assembly can serve every model-facing path.
 
-This bridge keeps provider discovery and invocation separate. `ModelProviderFactory` depends only on `ModelProviderRuntime`, so it can project provider lists and validate credentials without knowing which concrete plugin implementation answers the call. For the broader plugin architecture, see [the plugin system](/08-the-plugin-system.md).
+This bridge keeps provider discovery and invocation separate. `ModelProviderFactory` depends only on `ModelProviderRuntime`, so it can project provider lists and validate credentials without knowing which concrete plugin implementation answers the call. For the broader plugin architecture, see [the plugin system](./08-the-plugin-system.md).
 
 ## Quota and metering
 
