@@ -52,7 +52,7 @@ For the variable details behind that handoff, see [the variable system](./03-the
 
 ## Cross cutting behavior via layers
 
-The layer model keeps policy outside the engine core. `WorkflowEntry` attaches `WorkflowPersistenceLayer` from `api/core/app/workflow/layers/persistence.py`, `LLMQuotaLayer`, `ObservabilityLayer`, `PauseStatePersistenceLayer`, and any extra `GraphEngineLayer` instances that the caller passes in. Other Dify layers, such as `SuspendLayer`, `TimesliceLayer`, `ConversationVariablePersistLayer`, and `TriggerPostLayer`, extend the same lifecycle without changing graphon itself. These layers handle persistence, pause state, quota control, observability, and trigger cleanup, so they act as extension points rather than core engine logic. The persistence and pause story continues in [pause, resume, and run state](./05-pause-resume-and-run-state.md).
+The layer model keeps policy outside the engine core. `WorkflowEntry` attaches `WorkflowPersistenceLayer` from `api/core/app/workflow/layers/persistence.py`, `LLMQuotaLayer`, `ObservabilityLayer`, `PauseStatePersistenceLayer`, and any extra `GraphEngineLayer` instances that the caller passes in. Additional Dify layers, such as `SuspendLayer`, `TimesliceLayer`, `ConversationVariablePersistLayer`, and `TriggerPostLayer`, extend the same lifecycle without changing graphon itself. These layers handle persistence, pause state, quota control, observability, and trigger cleanup, and act as extension points rather than core engine logic. The persistence and pause story continues in [pause, resume, and run state](./05-pause-resume-and-run-state.md).
 
 ## Events out to SSE
 
