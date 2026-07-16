@@ -49,7 +49,7 @@ Dify wraps a `RedisChannel` and a `CelerySignalCommandChannel` in `CombinedComma
 
 ## Events out
 
-`GraphEngine.run()` yields a stream of `GraphEngineEvent` objects. `EventManager.emit_events()` drains the buffered event queue and streams those values out, while `EventHandler.dispatch()` turns node events into state transitions, traversal work, retries, and completion. In Dify, `WorkflowAppRunner._handle_event()` converts that engine stream into app-level queue events. The downstream queue path continues in [Anatomy of a workflow run](/01-anatomy-of-a-workflow-run.md).
+`GraphEngine.run()` yields a stream of `GraphEngineEvent` objects. `EventManager.emit_events()` drains the buffered event queue and streams those values out, while `EventHandler.dispatch()` turns node events into state transitions, traversal work, retries, and completion. In Dify, `WorkflowAppRunner._handle_event()` turns each engine event into an app queue update after the stream reaches the runner boundary. The downstream queue path continues in [Anatomy of a workflow run](/01-anatomy-of-a-workflow-run.md).
 
 ## Layers
 
@@ -61,7 +61,7 @@ Dify uses that boundary in a few specific places. `WorkflowEntry` attaches `LLMQ
 
 ## Failure
 
-`NodeRunFailedEvent` marks the worker fallback path when a node stops with an error. `EventHandler.dispatch()` sends that event to `ErrorHandler.handle_node_failure()`, which decides whether the run should retry, follow the fail-branch, fall back to a default value, or abort.
+`NodeRunFailedEvent` marks the worker fallback path when a node stops with an error. `EventHandler.dispatch()` sends that event to `ErrorHandler.handle_node_failure()`, which first checks retry, then resolves the fail-branch, default-value, or abort outcome.
 
 `Retry` requeues the node through `NodeRunRetryEvent`. `NodeRunExceptionEvent` carries the fail-branch and default-value outcomes forward, and the engine continues with the resulting outputs. If no strategy applies, the engine aborts the run. The downstream effects connect directly to [Parallel iteration and loops](/04-parallel-iteration-and-loops.md) and [Pause, resume, and run state](/05-pause-resume-and-run-state.md).
 
