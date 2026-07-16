@@ -10,9 +10,9 @@ The code splits structure and cost into two separate decisions. `IndexStructureT
 
 ## Ingestion as staged work
 
-`IndexingRunner.run()` follows a three stage path: extract, transform, and load. It re-queries the document in the current session, loads the process rule, chooses an index processor from `doc_form`, and commits after extraction and again after segment creation so the next worker session can see the rows it needs. The runner keeps the slow work out of the request thread and treats each stage boundary as a place where the database state must become durable before the next step starts.
+`IndexingRunner.run()` follows a three stage path: extract, transform, and load. It re-queries the document in the current session, loads the process rule, chooses an index processor from `doc_form`, and commits after extraction and again after segment creation so the next worker session can see the rows it needs. The runner keeps the slow work out of the request thread and onto the worker/Celery-style async plane described in [the big picture](./00-the-big-picture.md), and each stage boundary is where the database state must become durable before the next step starts.
 
-Extraction turns the datasource into raw text. Transform cleans that text and splits it into `Document` or `ChildDocument` objects. Load writes `DocumentSegment` rows, marks them as indexing, and then hands the chunks to the vector store or keyword table path.
+Extraction turns the datasource into raw text. Transform cleans that text and splits it into indexed segments. Load writes `DocumentSegment` rows, marks them as indexing, and then hands the chunks to the vector store or keyword table path.
 
 The economy path keeps cost low by indexing keywords only. In paragraph indexing, it calls `Keyword(dataset)` instead of vector creation, and query time later uses `KEYWORD_SEARCH`. The high quality path pays the embedding cost and writes vectors, which gives semantic retrieval later; `IndexingRunner` parallelizes chunk loading with a thread pool to reduce contention, and the parent child path writes child chunks into the vector store while the parent segment keeps the broader context.
 
