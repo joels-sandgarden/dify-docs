@@ -34,7 +34,7 @@ Multiple dataset retrieval runs each dataset in parallel threads, then merges th
 
 ## Where retrieval plugs into apps
 
-`KnowledgeRetrievalNode` reads query and attachment selectors from the `VariablePool`, builds a `KnowledgeRetrievalRequest`, and hands it to `DatasetRetrieval`. The node returns an `ArrayObjectSegment` named `result`, which downstream nodes can read from the workflow state just like any other variable. The agent tool path uses `DatasetRetrieverTool` for a single dataset and `DatasetMultiRetrieverTool` for multiple datasets; both call the same retrieval engine, and the multi tool adds a separate rerank pass with `RerankModelRunner` before it streams back resource metadata.
+`KnowledgeRetrievalNode` reads query and attachment selectors from the `VariablePool` ([the variable system](./03-the-variable-system.md)), builds a `KnowledgeRetrievalRequest`, and hands it to `DatasetRetrieval`. The node returns an `ArrayObjectSegment` named `result`, which downstream nodes can read from the workflow state just like any other variable. The agent tool path uses `DatasetRetrieverTool` for a single dataset and `DatasetMultiRetrieverTool` for multiple datasets; both call the same retrieval engine, and the multi tool adds a separate rerank pass with `RerankModelRunner` before it streams back resource metadata.
 
 As of July 2026, ingestion also has a workflow shaped path. `DatasourceNode` starts at the datasource boundary and populates the run context, while `KnowledgeIndexNode` accepts chunk data, calls `IndexProcessor.index_and_clean()`, commits, and then triggers `SummaryIndex.generate_and_vectorize_summary()`. That path turns ingestion into visible workflow steps instead of only a background runner.
 
