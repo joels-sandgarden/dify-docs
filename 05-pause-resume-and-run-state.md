@@ -44,5 +44,5 @@ The SSE stream can outlive a single request, so reconnects matter. The workflow 
 - `api/core/app/workflow/layers/persistence.py` — event-driven persistence from `GraphEngine`.
 - `api/core/app/layers/pause_state_persist_layer.py` — pause snapshots and `WorkflowResumptionContext`.
 - `api/core/app/layers/timeslice_layer.py` — `RESOURCE_LIMIT_REACHED` pause behavior.
+- `api/core/workflow/workflow_entry.py` and `api/controllers/service_api/app/workflow_events.py` — response-stream filter persistence and reconnect handling.
 - `api/services/human_input_service.py` and `api/tasks/app_generate/workflow_execute_task.py` — human-input submission and `resume_app_execution`.
-- `api/controllers/service_api/app/workflow_events.py` — SSE reconnect and snapshot replay.
