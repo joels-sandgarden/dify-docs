@@ -2,7 +2,7 @@
 
 ## Overview
 
-Dify keeps models, tools, agent strategies, datasources, triggers, and plugin endpoints outside the core so the platform can ship changes without tying every capability to the same release cycle. That split removes dependency bloat from the main application, shortens iteration for plugin capabilities, and opens the door to a third party plugin ecosystem instead of a closed core. The public plugin docs already cover type selection and type specific development, so this chapter stays at the architectural boundary and uses the official Dify material for authoring details. The code in `api/core/plugin/entities/plugin.py` and `api/core/plugin/plugin_service.py` shows the shape of that boundary: a small core that owns policy, discovery, caching, and lifecycle, with plugin capabilities that attach only where the product needs them.
+Dify keeps models, tools, agent strategies, datasources, triggers, and plugin endpoints outside the core so the platform can change one capability without forcing a full release of the rest. That split cuts dependency bloat, shortens iteration, and makes room for a third party plugin ecosystem instead of a closed core. The public plugin docs already cover type selection and type specific development, so this chapter stays at the architectural boundary. The code in `api/core/plugin/entities/plugin.py` and `api/core/plugin/plugin_service.py` shows a small core that owns policy, discovery, caching, and lifecycle while plugin capabilities attach only where the product needs them.
 
 ## The plugin types and their seams
 
