@@ -34,7 +34,7 @@ As of July 2026, the provider data model still carries hosted quota rows and cus
 
 ## Call sites
 
-One facade serves the main model-facing surfaces across the product. Workflow nodes use the quota layer in `api/core/app/workflow/layers/llm_quota.py`, LLM-backed agents and utility generation call through `ModelInstance`, and RAG indexing and query-time paths resolve embeddings and reranking through the tenant-bound manager. Provider selection and credential handling stay consistent regardless of where the request starts. For the graph engine boundary that drives those nodes, see [Inside the graph engine](/02-inside-the-graph-engine.md).
+One facade serves the main model-facing surfaces across the product. Workflow nodes use the quota layer in `api/core/app/workflow/layers/llm_quota.py`, LLM-backed agents and utility generation call through `ModelInstance`, and RAG indexing and query-time paths resolve embeddings and reranking through the tenant-bound manager. Provider selection and credential handling stay consistent regardless of where the request starts. For the graph engine boundary that drives those nodes, see [Inside the graph engine](./02-inside-the-graph-engine.md).
 
 ## Plugin backed providers
 
