@@ -70,9 +70,9 @@ A `human_input` pause follows the same structure in reverse. `api/core/workflow/
 
 ## Where to look in the code
 
-- `api/core/app/apps/workflow/app_generator.py`
-- `api/core/workflow/workflow_entry.py`
-- `api/core/workflow/node_factory.py`
-- `api/tasks/app_generate/workflow_execute_task.py`
-- `api/core/app/apps/workflow/app_queue_manager.py`
-- `src/graphon/graph_engine/graph_engine.py`
+- Dify repo: `api/core/app/apps/workflow/app_generator.py`
+- Dify repo: `api/core/workflow/workflow_entry.py`
+- Dify repo: `api/core/workflow/node_factory.py`
+- Dify repo: `api/tasks/app_generate/workflow_execute_task.py`
+- Dify repo: `api/core/app/apps/workflow/app_queue_manager.py`
+- graphon repo: `src/graphon/graph_engine/graph_engine.py`
