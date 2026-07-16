@@ -1,10 +1,10 @@
 # Inside the Graph Engine
 
-`GraphEngine` runs a workflow as a queue based system. It seeds ready work, hands nodes to worker threads, and turns each result into traversal and graph events. Dify wires that engine through `api/core/workflow/workflow_entry.py` and the workflow runner stack.
+`GraphEngine` runs workflow execution as a queue-driven system. It seeds ready work, streams events back out, and lets Dify attach workflow-specific behavior through `api/core/workflow/workflow_entry.py` and the workflow runner stack. This page explains the queue life cycle, shared state, event flow, layer boundary, and failure handling that make that orchestration work.
 
 ## Mental model
 
-`GraphEngine` does not walk the graph by call stack. It seeds a ready queue, `GraphStateManager` marks nodes ready or taken, `WorkerPool` starts thread workers, and each `Worker` drains the ready queue, runs a node, and pushes node events into the event queue. `GraphEngine.run()` yields `GraphEngineEvent` values, while Dify bridges that stream into app queue events in `api/core/app/apps/workflow_app_runner.py` and `api/core/app/apps/workflow/app_runner.py`.
+`GraphEngine._start_execution()` seeds the root node into the ready queue, and `GraphStateManager.enqueue_node()`, `GraphStateManager.start_execution()`, and `GraphStateManager.finish_execution()` keep the queue life cycle explicit as work moves from waiting to active to complete. `WorkerPool` runs that work on threads instead of the call stack, so traversal stays separate from node execution.
 
 ```mermaid
 flowchart LR
@@ -37,7 +37,7 @@ Dify sets `GRAPH_ENGINE_MIN_WORKERS = 3`, `GRAPH_ENGINE_MAX_WORKERS = 10`, `GRAP
 
 ## State during the run
 
-`GraphRuntimeState` carries the live execution snapshot: the `VariablePool`, ready queue, execution context, outputs, token counts, pause bookkeeping, and serialized resume state. `VariablePool` stores values by selector and gives the engine one place to read and update workflow data.
+`GraphRuntimeState` carries the shared execution snapshot through the run: the `VariablePool`, outputs, execution context, pause data, and run-level bookkeeping. `VariablePool` gives nodes, layers, and command handlers one place to read and update workflow data, so retries, pauses, and child runs all see the same current state.
 
 `GraphStateManager` owns node and edge state transitions, ready queue operations, and executing node bookkeeping. `ExecutionCoordinator` keeps the command processor, state manager, and worker pool in step. `GraphExecution` tracks workflow start, completion, pause, abort, errors, exceptions, and retries; `NodeExecution` tracks the per node execution id, retry count, state, and error text.
 
@@ -49,19 +49,21 @@ Dify wraps a `RedisChannel` and a `CelerySignalCommandChannel` in `CombinedComma
 
 ## Events out
 
-`GraphEngine.run()` yields graph and node events as a stream. `WorkflowEntry.run()` filters that stream with `iter_dify_graph_engine_events()`, and `WorkflowAppRunner` turns each engine event into the app queue event that Dify consumers read. The downstream queue path continues in [Anatomy of a workflow run](/01-anatomy-of-a-workflow-run.md).
+`GraphEngine.run()` yields a stream of `GraphEngineEvent` objects. `EventManager.emit_events()` drains the buffered event queue and streams those values out, while `EventHandler.dispatch()` turns node events into state transitions, traversal work, retries, and completion. In Dify, `WorkflowAppRunner._handle_event()` converts that engine stream into app-level queue events. The downstream queue path continues in [Anatomy of a workflow run](/01-anatomy-of-a-workflow-run.md).
 
 ## Layers
 
-`GraphEngineLayer` exposes `on_graph_start`, `on_event`, `on_graph_end`, `on_node_run_start`, and `on_node_run_end`. Dify attaches `WorkflowPersistenceLayer`, `ObservabilityLayer`, and `LLMQuotaLayer` in `api/core/workflow/workflow_entry.py`, then adds `SuspendLayer`, `ConversationVariablePersistenceLayer`, `PauseStatePersistenceLayer`, `TimeSliceLayer`, and `TriggerPostLayer` around the engine where pause, conversation, time slice, and trigger concerns live.
+`GraphEngineLayer.initialize(read_only_runtime_state, command_channel)` names the binding point for each layer. `GraphEngine.layer()` applies that binding before execution begins, giving each layer a read-only runtime snapshot and the command channel without exposing mutable engine internals.
+
+Dify uses that boundary in a few specific places. `WorkflowEntry` attaches `LLMQuotaLayer` and `ObservabilityLayer`; `WorkflowAppRunner` attaches `WorkflowPersistenceLayer`; and `WorkflowAppGenerator` attaches `PauseStatePersistenceLayer` when pause state configuration is present. The surrounding runner stack still adds session cleanup, suspension, conversation variable persistence, time slicing, and trigger bookkeeping where those concerns belong.
 
 `WorkflowPersistenceLayer` saves workflow and node execution state, `ObservabilityLayer` opens spans, and `LLMQuotaLayer` checks and deducts tenant quota. `SuspendLayer` tracks paused state, `ConversationVariablePersistenceLayer` persists `conversation.*` updates, `PauseStatePersistenceLayer` saves the resume snapshot, `TimeSliceLayer` sends pause commands when the scheduler hits its limit, and `TriggerPostLayer` updates trigger logs when a run ends.
 
 ## Failure
 
-`ErrorHandler.handle_node_failure()` checks node retry settings first, then applies the node error strategy. Retry produces `NodeRunRetryEvent`, fail branch converts the failure into `NodeRunExceptionEvent` routed through `fail-branch`, default value continues with the node's default outputs, and the absence of a strategy aborts the run.
+`NodeRunFailedEvent` marks the worker fallback path when a node stops with an error. `EventHandler.dispatch()` sends that event to `ErrorHandler.handle_node_failure()`, which decides whether the run should retry, follow the fail-branch, fall back to a default value, or abort.
 
-`EventHandler` then re-dispatches retry and exception outcomes or ends the workflow on abort. The same outcomes feed the loop and pause paths, so [Parallel iteration and loops](/04-parallel-iteration-and-loops.md) and [Pause, resume, and run state](/05-pause-resume-and-run-state.md) capture the related consequences.
+`Retry` requeues the node through `NodeRunRetryEvent`. `NodeRunExceptionEvent` carries the fail-branch and default-value outcomes forward, and the engine continues with the resulting outputs. If no strategy applies, the engine aborts the run. The downstream effects connect directly to [Parallel iteration and loops](/04-parallel-iteration-and-loops.md) and [Pause, resume, and run state](/05-pause-resume-and-run-state.md).
 
 ## Where to look in the code
 
