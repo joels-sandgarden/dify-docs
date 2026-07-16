@@ -4,7 +4,7 @@
 
 Dify treats model access as a shared runtime rather than as a separate integration for each provider. Graphon owns the runtime surface under `src/graphon/model_runtime/`, and Dify wraps it with tenant resolution, persisted configuration, and quota policy. That split lets the platform resolve a tenant's model choice once, then reuse the same execution path for LLM, embedding, rerank, speech to text, moderation, and text to speech providers.
 
-For the graph engine boundary, see [Inside the graph engine](/02-inside-the-graph-engine.md). For retrieval, see [the RAG pipeline](/07-the-rag-pipeline.md). For plugin discovery, see [the plugin system](/08-the-plugin-system.md).
+For the graph engine boundary, see [Inside the graph engine](./02-inside-the-graph-engine.md). For retrieval, see [the RAG pipeline](./07-the-rag-pipeline.md). For plugin discovery, see [the plugin system](./08-the-plugin-system.md).
 
 ## Mental model
 
