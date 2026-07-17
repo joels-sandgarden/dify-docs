@@ -87,7 +87,7 @@ As of July 2026, the repository also carries young, actively churning subsystems
 ## Where to look in the code
 
 - `api/models/model.py` and `api/models/workflow.py` define the app and workflow records that anchor the platform.
-- `api/core/app/apps/`, `api/core/workflow/workflow_entry.py`, `api/core/workflow/node_factory.py`, `api/core/workflow/nodes/`, `api/celery_entrypoint.py`, `api/tasks/`, and `api/core/app/apps/base_app_queue_manager.py` show the Dify side of the execution path.
-- `graphon`: `src/graphon/graph_engine/graph_engine.py` and `src/graphon/graph_engine/worker.py` carry engine orchestration.
-- `graphon`: `src/graphon/graph/graph.py` and `src/graphon/runtime/variable_pool.py` carry graph construction and variable storage.
+- `api/core/app/apps/`, `api/core/workflow/workflow_entry.py`, `api/core/workflow/node_factory.py`, `api/core/workflow/nodes/`, `api/celery_entrypoint.py`, `api/tasks/`, and `api/core/app/apps/base_app_queue_manager.py` map the Dify side of the execution path.
+- `graphon` repo: `src/graphon/graph_engine/graph_engine.py` and `src/graphon/graph_engine/worker.py` handle engine orchestration.
+- `graphon` repo: `src/graphon/graph/graph.py` and `src/graphon/runtime/variable_pool.py` handle graph construction and variable storage.
 - `api/core/model_manager.py`, `api/core/indexing_runner.py`, `api/core/rag/`, `api/core/plugin/`, `api/core/trigger/`, `api/extensions/ext_storage.py`, and `api/core/rag/datasource/vdb/vector_factory.py` map the supporting subsystems and stores.
