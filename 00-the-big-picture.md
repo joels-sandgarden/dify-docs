@@ -26,8 +26,6 @@ The `api/` tree follows a DDD and clean architecture shape. HTTP controllers sit
 
 Heavy work runs through Celery with Redis as broker. `api/celery_entrypoint.py` and `api/tasks/` move execution off the request path, and queue managers such as `api/core/app/apps/base_app_queue_manager.py` stream progress and output back over SSE. For the run lifecycle from dispatch to completion, see [Anatomy of a workflow run](/01-anatomy-of-a-workflow-run.md).
 
-The platform separates request handling, background execution, and storage so the same graph engine can serve several app surfaces.
-
 ```mermaid
 flowchart LR
   subgraph HTTP plane
