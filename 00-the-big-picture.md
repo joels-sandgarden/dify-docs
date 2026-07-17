@@ -6,7 +6,7 @@ This page keeps the whole system in view before any subsystem dive. The aim is a
 
 ## What Dify is for
 
-At the product level, Dify gives an engineer a way to compose LLM behavior visually, attach knowledge to that behavior, and expose the result through API driven delivery. The surface looks like several app modes, but the platform treats them as different entry shapes around a shared runtime and a shared graph of steps.
+At the product level, Dify turns visual app design into executable graphs that ground responses in knowledge and expose them through API driven delivery. The surface still presents as workflow, chatflow, agent, or completion app modes, but each mode feeds the same runtime and the same graph of steps.
 
 ## The domain object spine
 
