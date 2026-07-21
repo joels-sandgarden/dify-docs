@@ -1,0 +1,22 @@
+header:
+  title: Mental models, not API dumps.
+  description: Each page transfers the mental model of one Dify subsystem — what it is for, the design decisions behind it, and how it relates to its neighbors.
+
+items:
+  - col: col-5
+    icon: bento/rocket_launch
+    title: The execution model, finally written down
+    description: How a workflow run actually happens — the queue-and-worker graph engine, the variable pool, parallel iteration, pause and resume — none of which the official docs explain.
+    badges: [ ]
+
+  - col: col-7
+    icon: bento/extension
+    title: Grounded in the source
+    description: Every claim cites real files and symbols from the Dify repository and from Graphon, the extracted workflow engine, and every page ends with a "Where to look in the code" map. Nothing here is folklore — it was read out of the code.
+    badges: [ GraphEngine, VariablePool, ModelInstance, RAG ]
+
+  - col: col-7
+    icon: bento/shield
+    title: Complements the official docs
+    description: docs.dify.ai owns quickstarts, usage guides, plugin development, and self-hosting operations. This guide covers what those docs do not — the platform's internals and the semantics behind the product surface.
+    badges: [ ]

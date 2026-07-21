@@ -1,0 +1,25 @@
+# Sidebar structure for the docs section. The theme builds each link as
+# /docs/<urlize(title)>/ — so every `title` here must urlize to the same slug
+# as the corresponding page's `url` front matter.
+# NOTE: "The Big Picture" (00) and "The Plugin System" (08) are pending —
+# their DH conversations never opened PRs. Add them back to Orientation /
+# Platform when the pages land.
+- title: Orientation
+  pages:
+    - title: Anatomy of a Workflow Run
+
+- title: The Engine
+  pages:
+    - title: Inside the Graph Engine
+    - title: The Variable System
+    - title: Parallel Iteration and Loops
+    - title: Pause, Resume, and Run State
+
+- title: Platform
+  pages:
+    - title: The Model Runtime
+    - title: The RAG Pipeline
+
+- title: Meta
+  pages:
+    - title: About This Site

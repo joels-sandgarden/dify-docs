@@ -1,0 +1,23 @@
+# Dify Field Guide
+
+> A concept-level field guide to the Dify platform's internals, written by Doc Holiday
+> (https://doc.holiday) by exploring the Dify and Graphon sources directly. Each page
+> explains why a subsystem exists, its central abstractions, and how it relates to its
+> neighbors. Every doc page is also served as plain markdown at <page-url>/index.md.
+
+## Pages
+
+- [Anatomy of a Workflow Run](/docs/anatomy-of-a-workflow-run/): end-to-end trace of one run, HTTP to SSE
+- [Inside the Graph Engine](/docs/inside-the-graph-engine/): Graphon's queue-and-worker execution model
+- [The Variable System](/docs/the-variable-system/): the VariablePool and how data moves between nodes
+- [Parallel Iteration and Loops](/docs/parallel-iteration-and-loops/): child engines, concurrency, error modes
+- [Pause, Resume, and Run State](/docs/pause-resume-and-run-state/): what a run persists and how it resumes
+- [The Model Runtime](/docs/the-model-runtime/): one facade over every model provider
+- [The RAG Pipeline](/docs/the-rag-pipeline/): from uploaded document to retrieved context
+- [About This Site](/docs/about-this-site/): scope, audience, provenance
+
+## See also
+
+- Official Dify documentation: https://docs.dify.ai/
+- Dify source: https://github.com/langgenius/dify
+- Graphon (the extracted workflow engine): https://github.com/langgenius/graphon

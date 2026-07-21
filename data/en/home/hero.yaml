@@ -1,0 +1,18 @@
+# The wordmark SVG is disabled (empty string, not deleted, so the E25DX theme
+# default doesn't merge back in) — the header logo already carries the name.
+svg: ""
+
+badge: Written by Doc Holiday
+
+# The <span> gets the gradient text treatment (see hero.css).
+title: Dify internals, explained at the <span>concept level</span>.
+
+description: A field guide to the Dify platform's engine room — how workflows actually execute, what a run persists, and how the pieces relate. Written by exploring the Dify and Graphon sources directly, page by page.
+
+btn_primary:
+  label: Read the guide
+  url: docs/anatomy-of-a-workflow-run/
+
+btn_secondary:
+  label: Dify on GitHub
+  url: https://github.com/langgenius/dify
